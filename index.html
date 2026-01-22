@@ -67,18 +67,6 @@
         "quack3.mp3"
     ];
 
-    let fullscreenActivated = false;
-
-    function requestFullscreen() {
-        if (!fullscreenActivated) {
-            const el = document.documentElement;
-            if (el.requestFullscreen) el.requestFullscreen();
-            else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-            else if (el.msRequestFullscreen) el.msRequestFullscreen();
-            fullscreenActivated = true;
-        }
-    }
-
     function vibrate(pattern) {
         if (pattern && "vibrate" in navigator) {
             navigator.vibrate(pattern);
@@ -133,3 +121,4 @@
 
 </body>
 </html>
+
