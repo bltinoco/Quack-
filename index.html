@@ -1,44 +1,39 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Magic Duck</title>
 
 <style>
-    html, body {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        overflow: hidden;
-        background-color: #9ddcff;
-        touch-action: manipulation;
-    }
-
     body {
+        margin: 0;
+        height: 100vh;
+        background-color: #9ddcff;
         display: flex;
         justify-content: center;
         align-items: center;
+        overflow: hidden;
         font-family: Arial, sans-serif;
     }
 
     #duck {
         width: 300px;
         max-width: 80vw;
+        z-index: 2;
         cursor: pointer;
         user-select: none;
-        -webkit-tap-highlight-color: transparent;
-        z-index: 2;
     }
 
     .quack {
         position: absolute;
+        font-size: 2rem;
         font-weight: bold;
         color: white;
-        pointer-events: none;
         animation: floatFade 2.5s ease-out forwards;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.25);
+        pointer-events: none;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
 
     @keyframes floatFade {
@@ -48,7 +43,7 @@
         }
         100% {
             opacity: 0;
-            transform: translateY(-60px) scale(1.15);
+            transform: translateY(-60px) scale(1.1);
         }
     }
 </style>
@@ -57,7 +52,7 @@
 <body>
 
 <img id="duck" src="duck.png" alt="Rubber Duck Mage">
-
+      
 <script>
     const duck = document.getElementById("duck");
 
@@ -67,8 +62,8 @@
         "quack3.mp3"
     ];
 
-    function vibrate(pattern) {
-        if (pattern && "vibrate" in navigator) {
+    function vibrate(pattern = [100]) {
+        if ("vibrate" in navigator) {
             navigator.vibrate(pattern);
         }
     }
@@ -81,44 +76,49 @@
     }
 
     function spawnQuacks(amount = 6) {
-        const rect = duck.getBoundingClientRect();
+        const duckRect = duck.getBoundingClientRect();
 
         for (let i = 0; i < amount; i++) {
-            const q = document.createElement("div");
-            q.className = "quack";
-            q.textContent = "Quack!";
+            const quack = document.createElement("div");
+            quack.className = "quack";
+            quack.textContent = "Quack!";
 
-            const offsetX = (Math.random() - 0.5) * 220;
-            const offsetY = (Math.random() - 0.5) * 160;
+            const offsetX = (Math.random() - 0.5) * 200;
+            const offsetY = (Math.random() - 0.5) * 150;
 
-            q.style.left = rect.left + rect.width / 2 + offsetX + "px";
-            q.style.top = rect.top + rect.height / 2 + offsetY + "px";
-            q.style.fontSize = (1.5 + Math.random() * 1.5) + "rem";
-            q.style.transform = `rotate(${Math.random() * 20 - 10}deg)`;
+            quack.style.left =
+                duckRect.left + duckRect.width / 2 + offsetX + "px";
+            quack.style.top =
+                duckRect.top + duckRect.height / 2 + offsetY + "px";
 
-            document.body.appendChild(q);
-            setTimeout(() => q.remove(), 2500);
+            quack.style.fontSize = 1.5 + Math.random() * 1.5 + "rem";
+            quack.style.transform = `rotate(${Math.random() * 20 - 10}deg)`;
+
+            document.body.appendChild(quack);
+
+            setTimeout(() => quack.remove(), 2500);
         }
     }
 
-    function quackEvent(amount, vibration) {
+    function quackEvent(amount, vibratePattern) {
         playRandomQuack();
         spawnQuacks(amount);
-        vibrate(vibration);
+        vibrate(vibratePattern);
     }
 
-    // Automatic quack every 10s (no vibration — browser rule)
+    // Automatic quack every 10 seconds (NO vibration — browser restriction)
     setInterval(() => {
         quackEvent(6, null);
-    }, 5000);
+    }, 10000);
 
-    // TAP / CLICK
+    // TAP / CLICK CHAOS MODE — vibration enabled
     duck.addEventListener("click", () => {
-        requestFullscreen();
         quackEvent(10, [80, 40, 80]);
     });
 </script>
 
+
 </body>
 </html>
+
 
