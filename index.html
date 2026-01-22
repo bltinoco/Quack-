@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Magic Duck</title>
+
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        background-color: #9ddcff;
+        touch-action: manipulation;
+    }
+
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: Arial, sans-serif;
+    }
+
+    #duck {
+        width: 300px;
+        max-width: 80vw;
+        cursor: pointer;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        z-index: 2;
+    }
+
+    .quack {
+        position: absolute;
+        font-weight: bold;
+        color: white;
+        pointer-events: none;
+        animation: floatFade 2.5s ease-out forwards;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.25);
+    }
+
+    @keyframes floatFade {
+        0% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        100% {
+            opacity: 0;
+            transform: translateY(-60px) scale(1.15);
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<img id="duck" src="duck.png" alt="Rubber Duck Mage">
+
+<script>
+    const duck = document.getElementById("duck");
+
+    const quackSounds = [
+        "quack1.mp3",
+        "quack2.mp3",
+        "quack3.mp3"
+    ];
+
+    let fullscreenActivated = false;
+
+    function requestFullscreen() {
+        if (!fullscreenActivated) {
+            const el = document.documentElement;
+            if (el.requestFullscreen) el.requestFullscreen();
+            else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+            else if (el.msRequestFullscreen) el.msRequestFullscreen();
+            fullscreenActivated = true;
+        }
+    }
+
+    function vibrate(pattern) {
+        if (pattern && "vibrate" in navigator) {
+            navigator.vibrate(pattern);
+        }
+    }
+
+    function playRandomQuack() {
+        const sound = new Audio(
+            quackSounds[Math.floor(Math.random() * quackSounds.length)]
+        );
+        sound.play();
+    }
+
+    function spawnQuacks(amount = 6) {
+        const rect = duck.getBoundingClientRect();
+
+        for (let i = 0; i < amount; i++) {
+            const q = document.createElement("div");
+            q.className = "quack";
+            q.textContent = "Quack!";
+
+            const offsetX = (Math.random() - 0.5) * 220;
+            const offsetY = (Math.random() - 0.5) * 160;
+
+            q.style.left = rect.left + rect.width / 2 + offsetX + "px";
+            q.style.top = rect.top + rect.height / 2 + offsetY + "px";
+            q.style.fontSize = (1.5 + Math.random() * 1.5) + "rem";
+            q.style.transform = `rotate(${Math.random() * 20 - 10}deg)`;
+
+            document.body.appendChild(q);
+            setTimeout(() => q.remove(), 2500);
+        }
+    }
+
+    function quackEvent(amount, vibration) {
+        playRandomQuack();
+        spawnQuacks(amount);
+        vibrate(vibration);
+    }
+
+    // Automatic quack every 10s (no vibration — browser rule)
+    setInterval(() => {
+        quackEvent(6, null);
+    }, 5000);
+
+    // TAP / CLICK
+    duck.addEventListener("click", () => {
+        requestFullscreen();
+        quackEvent(10, [80, 40, 80]);
+    });
+</script>
+
+</body>
+</html>
